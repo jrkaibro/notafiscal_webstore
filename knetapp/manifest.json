@@ -1,0 +1,41 @@
+{
+  "name": "KnetAppTools",
+  "version": "1.0.0",
+  "description": "Utilitário Web",
+  "author": "KnetApp",
+  "short_name": "KnetAppTools",
+  "permissions": ["nativeMessaging","tabs","activeTab","management","declarativeContent","storage","background"],  
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "web_accessible_resources": [
+    "config.json"
+  ],
+  "background": {
+    "scripts": ["js/config.js","js/background.js"],
+    "persistent": true
+  },
+  "externally_connectable": {
+    "matches": ["*://dev.knetapp.com.br/*,http://*/*,https://*/,https://dev.wvetro.com.br/*"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*","https://*/*"],
+      "js": ["/js/api.js"]
+     }
+   ],
+  "page_action": {
+    "default_popup": "content.html",
+    "default_icon": {
+      "16": "images/knetapp16.png",
+      "32": "images/knetapp32.png",
+      "48": "images/knetapp48.png",
+      "128": "images/knetapp128.png"
+    }
+  },
+  "icons": {
+    "16": "images/knetapp16.png",
+    "32": "images/knetapp32.png",
+    "48": "images/knetapp48.png",
+    "128": "images/knetapp128.png"
+  },
+  "manifest_version": 2
+}

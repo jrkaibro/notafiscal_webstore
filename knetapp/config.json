@@ -1,0 +1,8 @@
+{
+    "name": "knetapp",
+    "version": "1.0",
+    "description": "Utilitário Web",
+    "beta": "dev.knetapp.com.br",
+    "production": "dev.knetapp.com.br",
+    "protocol": "https"
+}

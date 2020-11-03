@@ -1,0 +1,41 @@
+{
+  "name": "WVetroSign",
+  "version": "1.4",
+  "description": "Recursos para aplicação wvetro",
+  "author": "WVETRO",
+  "short_name": "WVetroSign",
+  "permissions": ["nativeMessaging","tabs","activeTab","management","declarativeContent","storage","https://beta.wvetro.com.br/*","https://sistema.wvetro.com.br/*","http://localhost/*"],  
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "web_accessible_resources": [
+    "config.json"
+  ],
+  "background": {
+    "scripts": ["js/config.js","js/background.js"],
+    "persistent": true
+  },
+  "externally_connectable": {
+    "matches":  ["*://*.wvetro.com.br/*"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://beta.wvetro.com.br/*","https://sistema.wvetro.com.br/*","http://127.0.0.1/*","https://dev.wvetro.com.br/*"],
+      "js": ["/js/api.js"]
+     }
+   ],
+  "page_action": {
+    "default_popup": "content.html",
+    "default_icon": {
+      "16": "images/wvetro16.png",
+      "32": "images/wvetro32.png",
+      "48": "images/wvetro48.png",
+      "128": "images/wvetro128.png"
+    }
+  },
+  "icons": {
+    "16": "images/wvetro16.png",
+    "32": "images/wvetro32.png",
+    "48": "images/wvetro48.png",
+    "128": "images/wvetro128.png"
+  },
+  "manifest_version": 2
+}

@@ -1,0 +1,9 @@
+{
+    "name": "wvetro",
+    "version": "1.0",
+    "description": "Recursos para aplicação wvetro",
+    "beta": "beta.wvetro.com.br",
+    "production": "sistema.wvetro.com.br",
+    "developer": "dev.wvetro.com.br",
+    "protocol": "https"
+}

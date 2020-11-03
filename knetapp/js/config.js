@@ -1,0 +1,17 @@
+var config = {
+    name: "KnetTools",
+    version: "1.0",
+    description: "Recursos para aplicação wvetro",
+    beta: "beta.knetapp.com.br",
+    production: "app.knetapp.com.br",
+    protocol: "https://",
+    baseurl: "#",
+    upgrade: "",
+    display: "",
+    terminal: "",
+    info: "prest_NotaFiscalExtension",
+    servicelocal: "http://localhost:9876/com.knetapp.service.ServiceServer?wsdl",
+    serviceversion: "1.0.0",
+    downloadbeta:"https://dev.knetapp.com.br/download/wvetro.setup.exe",
+    downloadprod:"https://www.knetapp.com.br/download/wvetro.setup.exe",
+};
