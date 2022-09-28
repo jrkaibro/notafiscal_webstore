@@ -19,8 +19,6 @@ var background = {
       this.current_navigator = browser;
     }
 
-    console.log(this.current_navigator);
-
     // verifica dominio quando esta instalado.
     chrome.runtime.onInstalled.addListener(function (request, sender, sendResponse) {
       
@@ -33,19 +31,19 @@ var background = {
       chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
         chrome.declarativeContent.onPageChanged.addRules([{
           conditions: [new chrome.declarativeContent.PageStateMatcher({
+            pageUrl: { hostEquals: 'colore.internal', schemes: ['https','http'] },
+          })],
+          actions: [new chrome.declarativeContent.ShowPageAction()]
+        },
+        {
+          conditions: [new chrome.declarativeContent.PageStateMatcher({
+            pageUrl: { hostEquals: 'knetapp.internal', schemes: ['https','http'] },
+          })],
+          actions: [new chrome.declarativeContent.ShowPageAction()]
+        },
+        {
+          conditions: [new chrome.declarativeContent.PageStateMatcher({
             pageUrl: { hostEquals: 'localhost', schemes: ['https','http'] },
-          })],
-          actions: [new chrome.declarativeContent.ShowPageAction()]
-        },
-        {
-          conditions: [new chrome.declarativeContent.PageStateMatcher({
-            pageUrl: { hostEquals: '127.0.0.1', schemes: ['https','http'] },
-          })],
-          actions: [new chrome.declarativeContent.ShowPageAction()]
-        },
-        {
-          conditions: [new chrome.declarativeContent.PageStateMatcher({
-            pageUrl: { hostEquals: 'knetapp.com.br', schemes: ['https','http'] },
           })],
           actions: [new chrome.declarativeContent.ShowPageAction()]
         }
@@ -56,17 +54,18 @@ var background = {
 
     // Troca de menssagem
     chrome.runtime.onMessageExternal.addListener(function(request, sender, sendResponse) {
-    
-      switch(request.Action) {
+
+      var param = JSON.parse(request);
+
+      switch(param.Action) {
         case 'printer':
-          var json = JSON.stringify(request);
-          background.transmitir(json);
+          background.transmitir(param);
           break;
         case '':
           // code block
           break;
         default:
-            console.log('Error');
+            console.log('Metodo não encontrado verifique o parametro da aplicação !');
       }
       
     });
@@ -83,11 +82,11 @@ var background = {
 
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open('POST', background.wsdl, true);
-
+    
     var sr = '<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">'+
                 '<Body>'+
                     '<imprimir xmlns="http://service.knetapp.com/">'+
-                        '<arg0 xmlns="">'+ parm +'</arg0>'+
+                        '<arg0 xmlns="">'+ parm.Value +'</arg0>'+
                     '</imprimir>'+
                 '</Body>'+
             '</Envelope>';
@@ -110,7 +109,6 @@ var background = {
 
           if (xmlDoc.getElementsByTagName("return")[0].childNodes[0].nodeValue != "") {
            console.log(text);
-           app.servicestatus = true;
           }
 
         }
@@ -119,14 +117,70 @@ var background = {
 
     // Send the POST request
     xmlhttp.setRequestHeader('Content-Type', 'text/xml');
+    xmlhttp.setRequestHeader('Access-Control-Allow-Origin','*');
+    xmlhttp.setRequestHeader('Accept','*/*');
     xmlhttp.send(sr);
 
   },
-  connect: function(){
+  connect: function() {
+
+    this.signnative = this.current_navigator.runtime.connectNative(this.hostName);
+    this.signnative.onDisconnect.addListener(this.onDisconnected);
+	  this.signnative.onMessage.addListener(this.receiveMessage);
 
   },
   onDisconnected: function() {
   
+    console.log("Native messaging host disconnected.");
+	
+    var error = '';
+    
+    if (navigator.userAgent.indexOf("Chrome") != -1) {
+      
+      this.signnative = null;
+
+      error = chrome.runtime.lastError.message;
+  
+      if (this.testConnection && error === "Error when communicating with the native messaging host.") {
+        this.sendMessage({"text": "testConnection"});
+      } else {
+        if (this.testConnection && error === "Specified native messaging host not found.") {
+          chrome.tabs.query({}, function(tabs) {
+            for (tab in tabs) {
+              var str = tabs[tab].url;
+              if (str == pageUrl) {
+                chrome.tabs.sendMessage(tabs[tab].id, {"type": "FROM_EXTENSION", "function" : "testConnection", "text" : "Specified native messaging host not found."});
+              }
+            }
+          });
+        }
+      }
+    } else {
+      error = this.signnative.error;
+      this.signnative = null;
+  
+      if (this.testConnection && (error == undefined || error == null)) {
+        this.sendMessage({"text": "testConnection"});
+      } else {
+        if (this.testConnection && error.message === "No such native application com.gxc.digitalsign.native") {
+          browser.tabs.query({}, function(tabs) {
+            for (tab in tabs) {
+              var str = tabs[tab].url;
+              if (str == pageUrl) {
+                browser.tabs.sendMessage(tabs[tab].id, {"type": "FROM_EXTENSION", "function" : "testConnection", "text" : "No such native application com.gxc.digitalsign.native"});
+              }
+            }
+          });
+        } else {
+          if (this.testConnection) {
+            this.sendMessage({"text": "testConnection"});
+          }
+        }
+      }
+    }
+
+
+
   },
 
   loadConfig: function () {
