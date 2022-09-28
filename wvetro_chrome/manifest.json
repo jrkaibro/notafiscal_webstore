@@ -1,28 +1,16 @@
 {
-  "name": "WVetroSign",
-  "version": "1.4",
+  "manifest_version": 3,
+  "name": "WVetrosign",
+  "version": "2.0",
   "description": "Recursos para aplicação wvetro",
-  "author": "WVETRO",
-  "short_name": "WVetroSign",
-  "permissions": ["nativeMessaging","tabs","activeTab","management","declarativeContent","storage","https://beta.wvetro.com.br/*","https://sistema.wvetro.com.br/*","http://localhost/*"],  
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
-  "web_accessible_resources": [
-    "config.json"
-  ],
+  "author": "KnetApp Solution",
   "background": {
-    "scripts": ["js/config.js","js/background.js"],
-    "persistent": true
+    "service_worker": "/js/config.js"
   },
-  "externally_connectable": {
-    "matches":  ["*://*.wvetro.com.br/*"]
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
   },
-  "content_scripts": [
-    {
-      "matches": ["https://beta.wvetro.com.br/*","https://sistema.wvetro.com.br/*","http://127.0.0.1/*","https://dev.wvetro.com.br/*"],
-      "js": ["/js/api.js"]
-     }
-   ],
-  "page_action": {
+  "action": {
     "default_popup": "content.html",
     "default_icon": {
       "16": "images/wvetro16.png",
@@ -37,5 +25,37 @@
     "48": "images/wvetro48.png",
     "128": "images/wvetro128.png"
   },
-  "manifest_version": 2
+  "web_accessible_resources": [
+    {
+      "resources": ["config.json", "/js/api.js"],
+      "matches": ["https://*.wvetro.com.br/*"],
+      "use_dynamic_url": true
+    }
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.wvetro.com.br/*"
+      ],
+      "js": ["/js/api.js"]
+    }
+  ],
+  "externally_connectable": {
+    "matches": ["*://*.wvetro.com.br/*"]
+  },
+  "file_system_provider_capabilities": {
+    "configurable": true,
+    "multiple_mounts": true,
+    "source": "network"
+  },
+  "homepage_url": "https://sistema.wvetro.com.br",
+  "host_permissions": ["https://*.wvetro.com.br/*"],
+  "permissions": [
+    "nativeMessaging",
+    "tabs",
+    "activeTab",
+    "management",
+    "declarativeContent",
+    "storage"
+  ]
 }

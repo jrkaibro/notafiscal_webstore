@@ -19,14 +19,11 @@ var background = {
       this.current_navigator = browser;
     }
 
-    console.log(this.current_navigator);
-
     // verifica dominio quando esta instaldo 
     chrome.runtime.onInstalled.addListener(function (request, sender, sendResponse) {
       
       if (request.fn in background) {
         background[request.fn](request, sender, sendResponse);
-        console.log(request.fn);
       }
 
       // Delimita a permssão por dominio
@@ -57,17 +54,56 @@ var background = {
     // Troca de menssagem
     chrome.runtime.onMessageExternal.addListener(function(request, sender, sendResponse) {
     
-      switch(request.Action) {
+      switch (request.Action) {
         case 'Transmitir':
+            var json = JSON.stringify(request);
+            background.transmitir(json);
+            break;
+        case 'Cancelar':
+            var json = JSON.stringify(request);
+            console.log("cancelar nota fiscal  : " + json);
+            background.cancelar(json);
+            break;
+        case 'CartaCorrecao':
+            var json = JSON.stringify(request);
+            background.cartacorrecao(json);
+            break;
+        case 'Consultar':
+            var json = JSON.stringify(request);
+            background.consultar(json);
+            break;
+        case 'Protocolar':
+              var json = JSON.stringify(request);
+              background.protocolar(json);
+              break;
+        case 'Inutilizar':
+            var json = JSON.stringify(request);
+            background.inutilizar(json);
+            break;
+        case 'Manifestar':
+            var json = JSON.stringify(request);
+            background.manifestar(json);
+            break;
+        case 'Validar':
+            var json = JSON.stringify(request);
+            background.validar(json);
+            break;
+        case 'Validarnf':
+            var json = JSON.stringify(request);
+            console.log(json);
+            background.validarnf(json);
+            break;
+        case 'Upgrade':
+            var json = JSON.stringify(request);
+            background.upgrade(json);
+            break;
+        case 'Manifestar':
           var json = JSON.stringify(request);
-          background.transmitir(json);
-          break;
-        case '':
-          // code block
+          background.manifestar(json);
           break;
         default:
-            alert('Error');
-      }
+            alert('Metodo não encontrado');
+    }
 
     });
 
@@ -110,17 +146,476 @@ var background = {
           }
 
           if (xmlDoc.getElementsByTagName("return")[0].childNodes[0].nodeValue != "") {
-           console.log(text);
-           app.servicestatus = true;
+            var json = xmlDoc.getElementsByTagName("return")[0].childNodes[0].nodeValue;
+            var resposta = JSON.parse(json);
+              if (resposta.respNotafiscal.status == 100) {
+                alert(resposta.respNotafiscal.message);
+              }
           }
 
         }
       }
+
     }
 
     // Send the POST request
     xmlhttp.setRequestHeader('Content-Type', 'text/xml');
     xmlhttp.send(sr);
+
+  },
+  cancelar: function(parm){
+
+    var text = "";
+    var parser, xmlDoc;
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('POST', background.wsdl, true);
+
+    var sr = '<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">'+
+                '<Body>'+
+                    '<cancelar xmlns="http://service.knetapp.com/">'+
+                        '<arg0 xmlns="">'+ parm +'</arg0>'+
+                    '</cancelar>'+
+                '</Body>'+
+            '</Envelope>';
+
+    xmlhttp.onreadystatechange = function () {
+      
+      if (xmlhttp.readyState == 4) {
+        if (xmlhttp.status == 200) {
+
+          text = xmlhttp.responseText;
+
+          if (window.DOMParser) {
+            parser = new DOMParser();
+            xmlDoc = parser.parseFromString(text, "text/xml");
+          } else {
+            xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+            xmlDoc.async = false;
+            xmlDoc.loadXML(text);
+          }
+
+          if (xmlDoc.getElementsByTagName("return")[0].childNodes[0].nodeValue != "") {
+            var json = xmlDoc.getElementsByTagName("return")[0].childNodes[0].nodeValue;
+            var resposta = JSON.parse(json);
+              if (resposta.respNotafiscal.status == 100) {
+                alert(resposta.respNotafiscal.message);
+              }
+          }
+
+        }
+      }
+
+    }
+
+    // Send the POST request
+    xmlhttp.setRequestHeader('Content-Type', 'text/xml');
+    xmlhttp.send(sr);
+
+
+  },
+  cartacorrecao: function(parm) {
+
+    var text = "";
+    var parser, xmlDoc;
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('POST', background.wsdl, true);
+
+    var sr = '<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">'+
+                '<Body>'+
+                    '<cartacorrecao xmlns="http://service.knetapp.com/">'+
+                        '<arg0 xmlns="">'+ parm +'</arg0>'+
+                    '</cartacorrecao>'+
+                '</Body>'+
+            '</Envelope>';
+
+    xmlhttp.onreadystatechange = function () {
+      
+      if (xmlhttp.readyState == 4) {
+        if (xmlhttp.status == 200) {
+
+          text = xmlhttp.responseText;
+
+          if (window.DOMParser) {
+            parser = new DOMParser();
+            xmlDoc = parser.parseFromString(text, "text/xml");
+          } else {
+            xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+            xmlDoc.async = false;
+            xmlDoc.loadXML(text);
+          }
+
+          if (xmlDoc.getElementsByTagName("return")[0].childNodes[0].nodeValue != "") {
+            var json = xmlDoc.getElementsByTagName("return")[0].childNodes[0].nodeValue;
+            var resposta = JSON.parse(json);
+              if (resposta.respNotafiscal.status == 100) {
+                alert(resposta.respNotafiscal.message);
+              }
+          }
+
+        }
+      }
+
+    }
+
+    // Send the POST request
+    xmlhttp.setRequestHeader('Content-Type', 'text/xml');
+    xmlhttp.send(sr);
+
+  },
+  consultar: function(parm) {
+
+    var text = "";
+    var parser, xmlDoc;
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('POST', background.wsdl, true);
+
+    var sr = '<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">'+
+                '<Body>'+
+                    '<consultar xmlns="http://service.knetapp.com/">'+
+                        '<arg0 xmlns="">'+ parm +'</arg0>'+
+                    '</consultar>'+
+                '</Body>'+
+            '</Envelope>';
+
+    xmlhttp.onreadystatechange = function () {
+      
+      if (xmlhttp.readyState == 4) {
+        if (xmlhttp.status == 200) {
+
+          text = xmlhttp.responseText;
+
+          if (window.DOMParser) {
+            parser = new DOMParser();
+            xmlDoc = parser.parseFromString(text, "text/xml");
+          } else {
+            xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+            xmlDoc.async = false;
+            xmlDoc.loadXML(text);
+          }
+
+          if (xmlDoc.getElementsByTagName("return")[0].childNodes[0].nodeValue != "") {
+            var json = xmlDoc.getElementsByTagName("return")[0].childNodes[0].nodeValue;
+            var resposta = JSON.parse(json);
+              if (resposta.respNotafiscal.status == 100) {
+                alert(resposta.respNotafiscal.message);
+              }
+          }
+
+        }
+      }
+
+    }
+
+    // Send the POST request
+    xmlhttp.setRequestHeader('Content-Type', 'text/xml');
+    xmlhttp.send(sr);
+
+  },
+  inutilizar: function(parm) {
+
+    var text = "";
+    var parser, xmlDoc;
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('POST', background.wsdl, true);
+
+    var sr = '<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">'+
+                '<Body>'+
+                    '<inutilizar xmlns="http://service.knetapp.com/">'+
+                        '<arg0 xmlns="">'+ parm +'</arg0>'+
+                    '</inutilizar>'+
+                '</Body>'+
+            '</Envelope>';
+
+    xmlhttp.onreadystatechange = function () {
+      
+      if (xmlhttp.readyState == 4) {
+        if (xmlhttp.status == 200) {
+
+          text = xmlhttp.responseText;
+
+          if (window.DOMParser) {
+            parser = new DOMParser();
+            xmlDoc = parser.parseFromString(text, "text/xml");
+          } else {
+            xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+            xmlDoc.async = false;
+            xmlDoc.loadXML(text);
+          }
+
+          if (xmlDoc.getElementsByTagName("return")[0].childNodes[0].nodeValue != "") {
+            var json = xmlDoc.getElementsByTagName("return")[0].childNodes[0].nodeValue;
+            var resposta = JSON.parse(json);
+              if (resposta.respNotafiscal.status == 100) {
+                alert(resposta.respNotafiscal.message);
+              }
+          }
+
+        }
+      }
+
+    }
+
+    // Send the POST request
+    xmlhttp.setRequestHeader('Content-Type', 'text/xml');
+    xmlhttp.send(sr);
+
+  },
+  manifestar: function(parm) {
+
+    var text = "";
+    var parser, xmlDoc;
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('POST', background.wsdl, true);
+
+    var sr = '<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">'+
+                '<Body>'+
+                    '<manifestar xmlns="http://service.knetapp.com/">'+
+                        '<arg0 xmlns="">'+ parm +'</arg0>'+
+                    '</manifestar>'+
+                '</Body>'+
+            '</Envelope>';
+
+    xmlhttp.onreadystatechange = function () {
+      
+      if (xmlhttp.readyState == 4) {
+        if (xmlhttp.status == 200) {
+
+          text = xmlhttp.responseText;
+
+          if (window.DOMParser) {
+            parser = new DOMParser();
+            xmlDoc = parser.parseFromString(text, "text/xml");
+          } else {
+            xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+            xmlDoc.async = false;
+            xmlDoc.loadXML(text);
+          }
+
+          if (xmlDoc.getElementsByTagName("return")[0].childNodes[0].nodeValue != "") {
+            var json = xmlDoc.getElementsByTagName("return")[0].childNodes[0].nodeValue;
+            var resposta = JSON.parse(json);
+              if (resposta.respNotafiscal.status == 100) {
+                alert(resposta.respNotafiscal.message);
+              }
+          }
+
+        }
+      }
+
+    }
+
+    // Send the POST request
+    xmlhttp.setRequestHeader('Content-Type', 'text/xml');
+    xmlhttp.send(sr);
+
+  },
+  validar: function(parm) {
+
+    var text = "";
+    var parser, xmlDoc;
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('POST', background.wsdl, true);
+
+    var sr = '<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">'+
+                '<Body>'+
+                    '<validar xmlns="http://service.knetapp.com/">'+
+                        '<arg0 xmlns="">'+ parm +'</arg0>'+
+                    '</validar>'+
+                '</Body>'+
+            '</Envelope>';
+
+    xmlhttp.onreadystatechange = function () {
+      
+      if (xmlhttp.readyState == 4) {
+        if (xmlhttp.status == 200) {
+
+          text = xmlhttp.responseText;
+
+          if (window.DOMParser) {
+            parser = new DOMParser();
+            xmlDoc = parser.parseFromString(text, "text/xml");
+          } else {
+            xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+            xmlDoc.async = false;
+            xmlDoc.loadXML(text);
+          }
+
+          if (xmlDoc.getElementsByTagName("return")[0].childNodes[0].nodeValue != "") {
+            var json = xmlDoc.getElementsByTagName("return")[0].childNodes[0].nodeValue;
+            var resposta = JSON.parse(json);
+              if (resposta.respNotafiscal.status == 100) {
+                alert(resposta.respNotafiscal.message);
+              }
+          }
+
+        }
+      }
+
+    }
+
+    // Send the POST request
+    xmlhttp.setRequestHeader('Content-Type', 'text/xml');
+    xmlhttp.send(sr);
+
+
+  },
+  validarnf: function(parm){
+
+    var text = "";
+    var parser, xmlDoc;
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('POST', background.wsdl, true);
+
+    var sr = '<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">'+
+                '<Body>'+
+                    '<validarnf xmlns="http://service.knetapp.com/">'+
+                        '<arg0 xmlns="">'+ parm +'</arg0>'+
+                    '</validarnf>'+
+                '</Body>'+
+            '</Envelope>';
+
+    xmlhttp.onreadystatechange = function () {
+      
+      if (xmlhttp.readyState == 4) {
+        if (xmlhttp.status == 200) {
+
+          text = xmlhttp.responseText;
+
+          if (window.DOMParser) {
+            parser = new DOMParser();
+            xmlDoc = parser.parseFromString(text, "text/xml");
+          } else {
+            xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+            xmlDoc.async = false;
+            xmlDoc.loadXML(text);
+          }
+
+          if (xmlDoc.getElementsByTagName("return")[0].childNodes[0].nodeValue != "") {
+            var json = xmlDoc.getElementsByTagName("return")[0].childNodes[0].nodeValue;
+            var resposta = JSON.parse(json);
+              if (resposta.respNotafiscal.status == 100) {
+                alert(resposta.respNotafiscal.message);
+              }
+          }
+
+        }
+      }
+
+    }
+
+    // Send the POST request
+    xmlhttp.setRequestHeader('Content-Type', 'text/xml');
+    xmlhttp.send(sr);
+
+
+  },
+  upgrade: function(parm) {
+
+    var text = "";
+    var parser, xmlDoc;
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('POST', background.wsdl, true);
+
+    var sr = '<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">'+
+                '<Body>'+
+                    '<upgrade xmlns="http://service.knetapp.com/">'+
+                        '<arg0 xmlns="">'+ parm +'</arg0>'+
+                    '</upgrade>'+
+                '</Body>'+
+            '</Envelope>';
+
+    xmlhttp.onreadystatechange = function () {
+      
+      if (xmlhttp.readyState == 4) {
+        if (xmlhttp.status == 200) {
+
+          text = xmlhttp.responseText;
+
+          if (window.DOMParser) {
+            parser = new DOMParser();
+            xmlDoc = parser.parseFromString(text, "text/xml");
+          } else {
+            xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+            xmlDoc.async = false;
+            xmlDoc.loadXML(text);
+          }
+
+          if (xmlDoc.getElementsByTagName("return")[0].childNodes[0].nodeValue != "") {
+            var json = xmlDoc.getElementsByTagName("return")[0].childNodes[0].nodeValue;
+            var resposta = JSON.parse(json);
+              if (resposta.respNotafiscal.status == 100) {
+                alert(resposta.respNotafiscal.message);
+              }
+          }
+
+        }
+      }
+
+    }
+
+    // Send the POST request
+    xmlhttp.setRequestHeader('Content-Type', 'text/xml');
+    xmlhttp.send(sr);
+
+  },
+  protocolar: function(parm){
+
+    var text = "";
+    var parser, xmlDoc;
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('POST', background.wsdl, true);
+
+    var sr = '<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">'+
+                '<Body>'+
+                    '<protocolar xmlns="http://service.knetapp.com/">'+
+                        '<arg0 xmlns="">'+ parm +'</arg0>'+
+                    '</protocolar>'+
+                '</Body>'+
+            '</Envelope>';
+
+    xmlhttp.onreadystatechange = function () {
+      
+      if (xmlhttp.readyState == 4) {
+        if (xmlhttp.status == 200) {
+
+          text = xmlhttp.responseText;
+
+          if (window.DOMParser) {
+            parser = new DOMParser();
+            xmlDoc = parser.parseFromString(text, "text/xml");
+          } else {
+            xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+            xmlDoc.async = false;
+            xmlDoc.loadXML(text);
+          }
+
+          if (xmlDoc.getElementsByTagName("return")[0].childNodes[0].nodeValue != "") {
+            var json = xmlDoc.getElementsByTagName("return")[0].childNodes[0].nodeValue;
+            var resposta = JSON.parse(json);
+              if (resposta.respNotafiscal.status == 100) {
+                alert(resposta.respNotafiscal.message);
+              }
+          } 
+
+        }
+      }
+
+    }
+
+    // Send the POST request
+    xmlhttp.setRequestHeader('Content-Type', 'text/xml');
+    xmlhttp.send(sr);
+
+
 
   },
   connect: function(){
@@ -196,13 +691,14 @@ var background = {
     var message = {"message" : btoa(JSON.stringify(text))}
     this.wvetrosignnative.postMessage(message);
   },
-  setwvetro: function (request, sender, sendResponse) {
+  setwvetro: function (request) {
     this.wvetro = request.wvetro;
   },
-  getwvetro: function (request, sender, sendResponse) {
+  getwvetro: function (sendResponse) {
     sendResponse(this.wvetro);
   },
   loadConfig: function () {
+    /*
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4) {
@@ -212,10 +708,14 @@ var background = {
 
     xhr.open("GET", chrome.extension.getURL("/config.json"), true);
     xhr.send();
+*/
+    await fetch('config.json')
+      .then(response => response.json())
+      .then(json => background.config = JSON.stringify(json));
 
   },
-  getConfig: function(request, sender, sendResponse) {
-    sendResponse(background.config)
+  getConfig: function(rsendResponse) {
+    sendResponse(background.config);
   }
 };
 

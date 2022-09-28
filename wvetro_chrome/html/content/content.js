@@ -2,8 +2,8 @@ var app = {
 
   servicestatus: false,
 
-  console: chrome.extension.getBackgroundPage().console,
-  config : chrome.extension.getBackgroundPage().config,
+ // console: chrome.extension.getBackgroundPage().console,
+  config : chrome.extension.getBackgroundPage(),
 
   _infodata: {},
 
@@ -160,6 +160,8 @@ var app = {
   info: async function () {
 
     const data = {}; 
+  
+console.log(app.config.production);
 
     await fetch('https://' + app.config.production + app.config.baseurl + app.config.info, {
       method: 'POST',
@@ -178,7 +180,7 @@ var app = {
   },
 
   serviceA3: function () {
-
+/*
     var text = "";
     var parser, xmlDoc;
 
@@ -219,9 +221,12 @@ var app = {
     xmlhttp.setRequestHeader('Content-Type', 'text/xml');
     xmlhttp.send(sr);
 
-
+*/
   },
 };
 
+function backconsol(){
+
+}
 
 app.init();
